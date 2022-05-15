@@ -24,11 +24,13 @@ async function run(){
            res.send(services)
        })
        app.get('/bookings' , async(req,res) =>{
-         const query = {};
+         const email = req.query.email;
+         console.log(req.body);
+         const query = {email:email};
          const cursor =  bookingcollection.find(query);
          const bookings= await cursor.toArray();
          res.send(bookings)
-         console.log(bookings);
+        
        })
        app.post('/bookings', async(req,res)=>{
          const booking = req.body;
