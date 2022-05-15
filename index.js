@@ -23,10 +23,28 @@ async function run(){
            const services = await cursor.toArray();
            res.send(services)
        })
+       app.get('/bookings' , async(req,res) =>{
+         const query = {};
+         const cursor =  bookingcollection.find(query);
+         const bookings= await cursor.toArray();
+         res.send(bookings)
+         console.log(bookings);
+       })
        app.post('/bookings', async(req,res)=>{
          const booking = req.body;
-         const result = await bookingcollection.insertOne(booking);
-         res.send(result)
+         const query ={ treatment: booking.treatment, date:booking.date, name:booking.name}
+       
+         const exists = await bookingcollection.findOne(query)
+        console.log(query);
+         console.log(exists);
+         
+         if(exists){
+           return res.send({success:false, exists})
+         }
+        else{
+          const result = await bookingcollection.insertOne(booking);
+          return res.send({success:true, result})
+        }
        })
 
     }
