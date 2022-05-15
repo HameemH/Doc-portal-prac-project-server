@@ -46,6 +46,22 @@ async function run(){
           return res.send({success:true, result})
         }
        })
+       app.get('/available', async(req, res) =>{
+        const date = req.query.date;
+        const services = await servicecollection.find().toArray();
+        const query = {date: date};
+        const bookings = await bookingcollection.find(query).toArray();
+
+        services.forEach(service=>{
+          const serviceBookings = bookings.filter(book => book.treatment === service.name);
+          const bookedSlots = serviceBookings.map(book => book.slot);
+          const available = service.slots.filter(slot => !bookedSlots.includes(slot));
+          service.slots = available;
+        });
+       
+  
+        res.send(services);
+       })
 
     }
     finally{
